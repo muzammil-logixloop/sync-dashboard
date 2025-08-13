@@ -1,0 +1,43 @@
+// src/routes/AppRoutes.jsx
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import Dashboard from "../pages/Dashboard";
+import Tenants from "../pages/Tenants";
+import Devices from "../Pages/Devices"
+import SyncMonitor from "../Pages/SyncMoniter";
+import Users from "../pages/Users";
+import Login from "../pages/Login";
+import TenantDetailPage from "../pages/TenantDetailPage";
+import ERPConfig from "../pages/Erpconfiguration"
+import SyncDetails from "../Pages/Syndetail";
+import DeviceLogViewer from "../Pages/DeviceLogViewer";
+
+
+// Protected route wrapper
+const PrivateRoute = () => {
+  const token = localStorage.getItem("token");
+  return token ? <Outlet /> : <Navigate to="/login" />;
+};
+
+const AppRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/login" element={<Login />} />
+
+      <Route element={<PrivateRoute />}>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/tenants" element={<Tenants />} />
+        <Route path="/devices" element={<Devices />} />
+        <Route path="/sync" element={<SyncMonitor />} />
+        <Route path="/erp" element={<ERPConfig />} />
+        <Route path="/users" element={<Users />} />
+        <Route path="/tenant/:tenantId" element={<TenantDetailPage />} />
+        <Route path="/sync-details/:tenant" element={<SyncDetails />} />
+        <Route path="/devices/:deviceName" element={<DeviceLogViewer/>} />  
+      </Route>
+
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
+  );
+};
+
+export default AppRoutes;
