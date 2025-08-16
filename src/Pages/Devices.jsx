@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from '../utils/axios';
 import { 
   MagnifyingGlassIcon, 
   ChevronDownIcon, 
@@ -7,9 +8,14 @@ import {
   Cog6ToothIcon,
   UserIcon
 } from '@heroicons/react/24/outline';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom'; // Uncomment when integrating with router
 
 const Devices = () => {
+  const [devices, setDevices] = useState([]);
+  const [filteredDevices, setFilteredDevices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
   const [filters, setFilters] = useState({
     search: '',
     tenant: '',
@@ -17,51 +23,125 @@ const Devices = () => {
     pickDate: ''
   });
 
-  const devices = [
-    {
-      deviceName: 'Tappy-23B1',
-      tenant: 'Sweet Bakes',
-      status: 'Online',
-      lastSeen: '12 July, 10:05 am',
-      syncStatus: 'Synced',
-      syncStatusColor: 'text-green-600'
-    },
-    {
-      deviceName: 'Tappy-78A3',
-      tenant: 'Café de Paris',
-      status: 'Offline',
-      lastSeen: '12 Jul, 4:32 PM',
-      syncStatus: 'Failed',
-      syncStatusColor: 'text-red-600'
-    },
-    {
-      deviceName: 'Tappy-OPX1',
-      tenant: 'Salon Xpress',
-      status: 'Offline',
-      lastSeen: '13 Jul, 8:55 AM',
-      syncStatus: 'Pending',
-      syncStatusColor: 'text-yellow-600'
-    },
-    {
-      deviceName: 'Tappy-119C',
-      tenant: 'Bread & Butter',
-      status: 'Online',
-      lastSeen: 'Today, 9:12 AM',
-      syncStatus: 'Synced',
-      syncStatusColor: 'text-green-600'
-    },
-    {
-      deviceName: 'Tappy-55Z2',
-      tenant: 'Deli Delight',
-      status: 'Online',
-      lastSeen: '14 Jul, 8:45 AM',
-      syncStatus: 'Synced',
-      syncStatusColor: 'text-green-600'
+  // Fetch devices from API using axios
+  const fetchDevices = async () => {
+    try {
+      setLoading(true);
+      
+      // Replace with your actual API endpoint
+      const response = await axios.get('/api/pairing/pair');
+      const apiData = response.data;
+      
+      // For demo purposes, using the provided API response
+      // const mockApiData = [
+      //   {
+      //     "device_id": "92f5cb136bfc9b1a",
+      //     "device_name": "Samsung SM-A217F",
+      //     "tenant_id": "77e36f16-a211-4930-b305-7dcc94e76278"
+      //   },
+      //   {
+      //     "device_id": "6f7c1540ce7b7d16",
+      //     "device_name": "Redmi 13",
+      //     "tenant_id": "44c5951f-5f62-4024-935b-a59ec125d7db"
+      //   },
+      //   {
+      //     "device_id": "C8632C9631B449A292DFC0939AF57783",
+      //     "device_name": "Samsung SM-A217F",
+      //     "tenant_id": "ed05c3a4-4ee7-48c6-895c-962853fe63ed"
+      //   },
+      //   {
+      //     "device_id": "sfjd",
+      //     "device_name": "Tablet A",
+      //     "tenant_id": "d58aedb4-f68f-47c2-947a-3cf95a25ff53"
+      //   },
+      //   {
+      //     "device_id": "DEVICE_B_456",
+      //     "device_name": "Samsung Tab",
+      //     "tenant_id": "d58aedb4-f68f-47c2-947a-3cf95a25ff53"
+      //   },
+      //   {
+      //     "device_id": "338d91de33f54f3c",
+      //     "device_name": "Vivo V2430",
+      //     "tenant_id": "77e36f16-a211-4930-b305-7dcc94e76278"
+      //   },
+      //   {
+      //     "device_id": "3fa938463d2488e7",
+      //     "device_name": "Samsung SM-A217F",
+      //     "tenant_id": "44c5951f-5f62-4024-935b-a59ec125d7db"
+      //   },
+      //   {
+      //     "device_id": "b1ac4e6484dcbbd2",
+      //     "device_name": "TECNO MOBILE LIMITED TECNO KE5k",
+      //     "tenant_id": "ed05c3a4-4ee7-48c6-895c-962853fe63ed"
+      //   }
+      // ];
+
+      // // Use mockApiData for demo, replace with apiData when using real API
+      const dataToUse = apiData; // Change to: apiData
+
+      // Transform API data to match component structure with placeholders
+      const transformedDevices = dataToUse.map(device => ({
+        deviceId: device.device_id,
+        deviceName: device.device_name,
+        tenantId: device.tenant_id,
+        tenant: device.tenant_id,
+        status: 'Online', // Placeholder - replace with actual data
+        lastSeen: '12 July, 10:05 am', // Placeholder - replace with actual data
+        syncStatus: 'Synced', // Placeholder - replace with actual data
+        syncStatusColor: 'text-green-600' // Placeholder - replace with actual data
+      }));
+
+      setDevices(transformedDevices);
+      setFilteredDevices(transformedDevices);
+    } catch (err) {
+      setError('Failed to fetch devices');
+      console.error('Error fetching devices:', err);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
+  // Helper functions
+  const getTenantName = (tenantId) => {
+    // Map tenant IDs to names - replace with actual tenant data from API
+    const tenantMap = {
+      "77e36f16-a211-4930-b305-7dcc94e76278": "Sweet Bakes",
+      "44c5951f-5f62-4024-935b-a59ec125d7db": "Café de Paris",
+      "ed05c3a4-4ee7-48c6-895c-962853fe63ed": "Salon Xpress",
+      "d58aedb4-f68f-47c2-947a-3cf95a25ff53": "Bread & Butter"
+    };
+    return tenantMap[tenantId] || "Unknown Tenant";
+  };
 
-  const navigate = useNavigate();
+  // Filter devices based on current filters
+  useEffect(() => {
+    let filtered = devices;
+
+    if (filters.search) {
+      filtered = filtered.filter(device => 
+        device.deviceName.toLowerCase().includes(filters.search.toLowerCase()) ||
+        device.deviceId.toLowerCase().includes(filters.search.toLowerCase())
+      );
+    }
+
+    if (filters.tenant) {
+      filtered = filtered.filter(device => device.tenant === filters.tenant);
+    }
+
+    if (filters.status) {
+      filtered = filtered.filter(device => device.status === filters.status);
+    }
+
+    setFilteredDevices(filtered);
+  }, [filters, devices]);
+
+  // Fetch devices on component mount
+  useEffect(() => {
+    fetchDevices();
+  }, []);
+
+  // const navigate = useNavigate(); // Remove this line when integrating with router
+
   const FilterDropdown = ({ label, value, onChange, options = [] }) => (
     <div className="relative">
       <select 
@@ -104,11 +184,66 @@ const Devices = () => {
     );
   };
 
+  const handleApplyFilter = () => {
+    // Filter logic is already handled by useEffect
+    console.log('Filters applied:', filters);
+  };
+
+  const handleResetFilter = () => {
+    setFilters({
+      search: '',
+      tenant: '',
+      status: '',
+      pickDate: ''
+    });
+  };
+
+  const handleRefresh = () => {
+    fetchDevices();
+  };
+
+
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="text-red-800">{error}</div>
+          <button 
+            onClick={handleRefresh}
+            className="mt-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-6">Devices</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-semibold text-gray-900">Devices</h1>
+          <button 
+            onClick={handleRefresh}
+            className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
+          >
+            <ArrowPathIcon className="w-4 h-4" />
+            <span>Refresh</span>
+          </button>
+        </div>
         
         {/* Search and Filters */}
         <div className="flex flex-wrap gap-4 items-center">
@@ -144,14 +279,27 @@ const Devices = () => {
             options={['Today', 'Yesterday', 'Last 7 days', 'Last 30 days']}
           />
           
-          <button className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+          <button 
+            onClick={handleApplyFilter}
+            className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+          >
             Apply Filter
           </button>
           
-          <button className="text-green-600 hover:text-green-700 text-sm font-medium">
+          <button 
+            onClick={handleResetFilter}
+            className="text-green-600 hover:text-green-700 text-sm font-medium"
+          >
             reset filter
           </button>
         </div>
+      </div>
+
+      {/* Results count */}
+      <div className="mb-4">
+        <p className="text-sm text-gray-600">
+          Showing {filteredDevices.length} of {devices.length} devices
+        </p>
       </div>
 
       {/* Device Table */}
@@ -169,38 +317,51 @@ const Devices = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {devices.map((device, index) => (
-                <tr key={index} className="hover:bg-gray-50 transition-colors">
-                  <td onClick={() => navigate(`/devices/${device.deviceName}`)} className="py-4 px-6 font-medium text-gray-900 hover:underline cursor-pointer">{device.deviceName}</td>
-                  <td className="py-4 px-6 text-gray-600">{device.tenant}</td>
-                  <td className="py-4 px-6">{getStatusBadge(device.status)}</td>
-                  <td className="py-4 px-6 text-gray-600">{device.lastSeen}</td>
-                  <td className="py-4 px-6">
-                    {getSyncStatusIndicator(device.syncStatus, device.syncStatusColor)}
-                  </td>
-                  <td className="py-4 px-6">
-                    <div className="flex space-x-2">
-                      <button className="p-1 text-blue-500 hover:text-blue-700 transition-colors" title="View">
-                        <EyeIcon className="w-4 h-4" />
-                      </button>
-                      <button className="p-1 text-green-500 hover:text-green-700 transition-colors" title="Sync">
-                        <ArrowPathIcon className="w-4 h-4" />
-                      </button>
-                      <button className="p-1 text-gray-500 hover:text-gray-700 transition-colors" title="Settings">
-                        <Cog6ToothIcon className="w-4 h-4" />
-                      </button>
-                      <button className="p-1 text-blue-500 hover:text-blue-700 transition-colors" title="User">
-                        <UserIcon className="w-4 h-4" />
-                      </button>
-                    </div>
+              {filteredDevices.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="py-8 px-6 text-center text-gray-500">
+                    No devices found matching your criteria
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filteredDevices.map((device, index) => (
+                  <tr key={device.deviceId} className="hover:bg-gray-50 transition-colors">
+                    <td 
+                      onClick={() => console.log('Navigate to device:', device.deviceName)} // Replace with actual navigation
+                      className="py-4 px-6 font-medium text-gray-900 hover:underline cursor-pointer"
+                    >
+                      {device.deviceName}
+                    </td>
+                    <td className="py-4 px-6 text-gray-600">{device.tenant}</td>
+                    <td className="py-4 px-6">{getStatusBadge(device.status)}</td>
+                    <td className="py-4 px-6 text-gray-600">{device.lastSeen}</td>
+                    <td className="py-4 px-6">
+                      {getSyncStatusIndicator(device.syncStatus, device.syncStatusColor)}
+                    </td>
+                    <td className="py-4 px-6">
+                      <div className="flex space-x-2">
+                        <button className="p-1 text-blue-500 hover:text-blue-700 transition-colors" title="View">
+                          <EyeIcon className="w-4 h-4" />
+                        </button>
+                        <button className="p-1 text-green-500 hover:text-green-700 transition-colors" title="Sync">
+                          <ArrowPathIcon className="w-4 h-4" />
+                        </button>
+                        <button className="p-1 text-gray-500 hover:text-gray-700 transition-colors" title="Settings">
+                          <Cog6ToothIcon className="w-4 h-4" />
+                        </button>
+                        <button className="p-1 text-blue-500 hover:text-blue-700 transition-colors" title="User">
+                          <UserIcon className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
         
-        {/* Pagination */}
+        {/* Pagination - You can make this dynamic too based on your API pagination */}
         <div className="bg-white px-6 py-4 border-t border-gray-200">
           <div className="flex items-center justify-center space-x-2">
             <button className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 transition-colors">01</button>

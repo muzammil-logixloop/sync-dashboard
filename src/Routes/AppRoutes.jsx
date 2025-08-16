@@ -4,6 +4,7 @@ import Dashboard from "../pages/Dashboard";
 import Tenants from "../pages/Tenants";
 import Devices from "../Pages/Devices"
 import SyncMonitor from "../Pages/SyncMoniter";
+import SyncMonitorc from "../Pages/SyncMonitor copy";
 import Users from "../pages/Users";
 import Login from "../pages/Login";
 import TenantDetailPage from "../pages/TenantDetailPage";
@@ -28,9 +29,10 @@ const AppRoutes = () => {
         <Route path="/tenants" element={<Tenants />} />
         <Route path="/devices" element={<Devices />} />
         <Route path="/sync" element={<SyncMonitor />} />
+        <Route path="/logs" element={<SyncMonitorc />} />
         <Route path="/erp" element={<ERPConfig />} />
         <Route path="/users" element={<Users />} />
-        <Route path="/tenant/:tenantId" element={<TenantDetailPage />} />
+        <Route path="/tenant/:teanut" element={<TenantDetailPage />} />
         <Route path="/sync-details/:tenant" element={<SyncDetails />} />
         <Route path="/devices/:deviceName" element={<DeviceLogViewer/>} />  
       </Route>

@@ -1,24 +1,62 @@
-import React, { useState } from "react";
-
-const tenant = {
-  name: "Sweet Bakes",
-  id: "com.sweetbakes.pos",
-  status: "Active (until Aug 2025)",
-  erp: "Sap / Shopify",
-  lastSync: "12 July, 10:05am",
-  online: 4,
-  offline: 1,
-  logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Glowing_Sunset.jpg/1200px-Glowing_Sunset.jpg", // Placeholder
-};
-
-const devices = [
-  { name: "Tappy Device -01", status: "Online", lastSeen: "12 July, 10:05 am" },
-  { name: "Tappy Device -02", status: "Offline", lastSeen: "12 July, 10:05 am" },
-  { name: "Tappy Device -03", status: "Online", lastSeen: "12 July, 10:05 am" },
-];
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "../utils/axios";
 
 const TenantDetailPage = () => {
+  const { teanut } = useParams(); // Tenant ID from route
+  const [devices, setDevices] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Devices");
+
+  const tenant = {
+    name: "Sweet Bakes",
+    id: "com.sweetbakes.pos",
+    status: "Active (until Aug 2025)",
+    erp: "Sap / Shopify",
+    lastSync: "12 July, 10:05am",
+    online: 4,
+    offline: 1,
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Glowing_Sunset.jpg/1200px-Glowing_Sunset.jpg",
+  };
+
+  // Fetch devices by tenant ID
+  useEffect(() => {
+    const fetchDevices = async () => {
+      try {
+        const response = await axios.get(
+          `/api/pairing/paired-devices/${teanut}`
+        );
+        if (response.data && response.data.pairedDevices) {
+          // Flatten both main + paired devices into table rows
+          const mappedDevices = response.data.pairedDevices.flatMap((d) => [
+            {
+              id: d.deviceId,
+              name: d.deviceName,
+              pairedWith: d.pairedWithDeviceName,
+              pairedAt: d.pairedAt,
+              status: "Online", // adjust logic if API gives status
+              lastSeen: new Date(d.pairedAt).toLocaleString(),
+            },
+            {
+              id: d.pairedWithDeviceId,
+              name: d.pairedWithDeviceName,
+              pairedWith: d.deviceName,
+              pairedAt: d.pairedAt,
+              status: "Online",
+              lastSeen: new Date(d.pairedAt).toLocaleString(),
+            },
+          ]);
+          setDevices(mappedDevices);
+        }
+      } catch (error) {
+        console.error("Error fetching devices:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDevices();
+  }, [teanut]);
 
   return (
     <div className="p-8 bg-white min-h-screen">
@@ -57,23 +95,6 @@ const TenantDetailPage = () => {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap items-center gap-4 mb-6">
-        <select className="border border-gray-300 rounded-lg px-4 py-2">
-          <option>Status</option>
-        </select>
-        <select className="border border-gray-300 rounded-lg px-4 py-2">
-          <option>Date</option>
-        </select>
-        <select className="border border-gray-300 rounded-lg px-4 py-2">
-          <option>Sync Type</option>
-        </select>
-        <button className="bg-lime-500 hover:bg-lime-600 text-white px-4 py-2 rounded-lg font-medium">
-          Apply Filter
-        </button>
-        <button className="text-sm text-gray-500 underline ml-auto">reset filter</button>
-      </div>
-
       {/* Tabs */}
       <div className="border-b border-gray-200 mb-4">
         {["Devices", "Sync History", "ERP Integration"].map((tab) => (
@@ -94,61 +115,51 @@ const TenantDetailPage = () => {
       {/* Devices Table */}
       {activeTab === "Devices" && (
         <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead>
-              <tr className="text-left text-gray-500 font-medium border-b">
-                <th className="px-4 py-3">Device Name</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Last Seen</th>
-                <th className="px-4 py-3">Logs</th>
-                <th className="px-4 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {devices.map((device, idx) => (
-                <tr
-                  key={idx}
-                  className="border-b hover:bg-gray-50 transition"
-                >
-                  <td className="px-4 py-3 font-medium">{device.name}</td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        device.status === "Online"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-gray-200 text-gray-700"
-                      }`}
-                    >
-                      {device.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">{device.lastSeen}</td>
-                  <td className="px-4 py-3 text-blue-600 hover:underline cursor-pointer">
-                    View logs →
-                  </td>
-                  <td className="px-4 py-3 text-lime-600 hover:underline cursor-pointer">
-                    🔄 Sync
-                  </td>
+          {loading ? (
+            <p className="text-center text-gray-500 py-6">Loading devices...</p>
+          ) : (
+            <table className="min-w-full text-sm">
+              <thead>
+                <tr className="text-left text-gray-500 font-medium border-b">
+                  <th className="px-4 py-3">Device Name</th>
+                  <th className="px-4 py-3">Device ID</th>
+                  <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3">Last Seen</th>
+                  <th className="px-4 py-3">Paired With</th>
+                  <th className="px-4 py-3">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {devices.map((device) => (
+                  <tr
+                    key={device.id}
+                    className="border-b hover:bg-gray-50 transition"
+                  >
+                    <td className="px-4 py-3 font-medium">{device.name}</td>
+                    <td className="px-4 py-3 font-medium">{device.id}</td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          device.status === "Online"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-gray-200 text-gray-700"
+                        }`}
+                      >
+                        {device.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">{device.lastSeen}</td>
+                    <td className="px-4 py-3">{device.pairedWith}</td>
+                    <td className="px-4 py-3 text-lime-600 hover:underline cursor-pointer">
+                      🔄 Sync
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       )}
-
-      {/* Pagination */}
-      <div className="flex justify-center items-center gap-2 mt-6">
-        {[1, 2, 3, "...", 4, 5, 6].map((pg, i) => (
-          <button
-            key={i}
-            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
-              pg === 2 ? "bg-gray-800 text-white" : "text-gray-500 hover:text-black"
-            }`}
-          >
-            {pg}
-          </button>
-        ))}
-      </div>
     </div>
   );
 };
