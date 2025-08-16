@@ -1,6 +1,6 @@
 import React from 'react';
 import { RefreshCw } from 'lucide-react';
-import CircularProgress from './CircularProgress';
+import CircularProgress from './circularProgress';
 
 const HealthStatusView = () => {
   return (
