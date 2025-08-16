@@ -1,16 +1,16 @@
 // src/routes/AppRoutes.jsx
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
-import Dashboard from "../pages/Dashboard";
-import Tenants from "../pages/Tenants";
-import Devices from "../Pages/Devices"
-import SyncMonitor from "../Pages/SyncMoniter";
-import SyncMonitorc from "../Pages/SyncMonitor copy";
-import Users from "../pages/Users";
-import Login from "../pages/Login";
-import TenantDetailPage from "../pages/TenantDetailPage";
-import ERPConfig from "../pages/Erpconfiguration"
-import SyncDetails from "../Pages/Syndetail";
-import DeviceLogViewer from "../Pages/DeviceLogViewer";
+import Dashboard from "../../pages/Dashboard";
+import Tenants from "../../pages/Tenants";
+import Devices from "../../Pages/Devices"
+import SyncMonitor from "../../Pages/SyncMoniter";
+import SyncMonitorc from "../../Pages/SyncMonitor copy";
+import Users from "../../pages/Users";
+import Login from "../../pages/Login";
+import TenantDetailPage from "../../pages/TenantDetailPage";
+import ERPConfig from "../../pages/Erpconfiguration"
+import SyncDetails from "../../Pages/Syndetail";
+import DeviceLogViewer from "../../Pages/DeviceLogViewer";
 
 
 // Protected route wrapper
