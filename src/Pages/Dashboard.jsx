@@ -1,8 +1,8 @@
 import React from 'react';
 import { Bell, User, ChevronLeft, ChevronRight, RefreshCw, Cloud, GitBranch, Play } from 'lucide-react';
 import StatsCard from './stat';
-import RecentActivity from '../components/recent';
-import HealthStatusView from '../components/health';
+import RecentActivity from './recent';
+import HealthStatusView from './health';
 
 const Dashboard = () => {
   return (
