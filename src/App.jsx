@@ -1,6 +1,6 @@
 // src/App.jsx
 import { useLocation } from "react-router-dom";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "./Components/sidebar"; // Import your Sidebar component
 import AppRoutes from "./routes/AppRoutes";
 
 const App = () => {
