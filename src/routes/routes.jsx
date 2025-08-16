@@ -1,14 +1,14 @@
 // src/routes/AppRoutes.jsx
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
-import Dashboard from "../pages/Dashboard";
-import Tenants from "../pages/Tenants";
+import Dashboard from "../Pages/Dashboard";
+import Tenants from "../Pages/Tenants";
 import Devices from "../Pages/Devices"
 import SyncMonitor from "../Pages/SyncMoniter";
 import SyncMonitorc from "../Pages/SyncMonitor copy";
-import Users from "../pages/Users";
-import Login from "../pages/Login";
-import TenantDetailPage from "../pages/TenantDetailPage";
-import ERPConfig from "../pages/Erpconfiguration"
+import Users from "../Pages/Users";
+import Login from "../Pages/Login";
+import TenantDetailPage from "../Pages/TenantDetailPage";
+import ERPConfig from "../Pages/Erpconfiguration"
 import SyncDetails from "../Pages/Syndetail";
 import DeviceLogViewer from "../Pages/DeviceLogViewer";
 
