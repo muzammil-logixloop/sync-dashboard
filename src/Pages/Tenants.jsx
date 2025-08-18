@@ -14,7 +14,7 @@ const Tenants = () => {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const tenantsPerPage = 5;
+  const tenantsPerPage = 8;
 
   const navigate = useNavigate();
 
@@ -38,8 +38,8 @@ const Tenants = () => {
   }, []);
 
   const handleTenantClick = (teanut) => {
-    navigate(`/tenant/${teanut}`);
-  };
+     navigate(`/tenant/${teanut}`);
+   };
 
   // Filtered tenants
   const filteredTenants = tenants.filter((t) => {
@@ -69,7 +69,7 @@ const Tenants = () => {
       <div className="flex flex-wrap items-center gap-4 mb-6">
         <input
           type="text"
-          placeholder="Search by Tenant name or ID"
+          placeholder="Search by Tenant email or ID"
           className="border border-gray-300 rounded-lg px-4 py-2 w-64"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -82,22 +82,9 @@ const Tenants = () => {
           <option value="All">All Plans</option>
           <option value="single_device">Single Device</option>
           <option value="three_devices">Up to 3 Devices</option>
+          <option value="eight_devices">Up to 8 Devices</option>
         </select>
-        <select
-          className="border border-gray-300 rounded-lg px-4 py-2"
-          value={subscription}
-          onChange={(e) => setSubscription(e.target.value)}
-        >
-          <option value="All">All Subscription Types</option>
-          <option value="Single Device">Single Device</option>
-          <option value="Up to 3 Devices">Up to 3 Devices</option>
-        </select>
-        <select className="border border-gray-300 rounded-lg px-4 py-2">
-          <option>Sync Health</option>
-        </select>
-        <button className="bg-lime-500 hover:bg-lime-600 text-white px-4 py-2 rounded-lg font-medium">
-          Apply Filter
-        </button>
+        
         <button
           className="text-sm text-gray-500 underline ml-auto"
           onClick={() => {
@@ -124,8 +111,8 @@ const Tenants = () => {
                 <tr className="text-left text-gray-500 font-medium">
                   <th className="px-4 py-2">Tenant Email</th>
                   <th className="px-4 py-2">Tenant ID</th>
-                  <th className="px-4 py-2">Subscription</th>
-                  <th className="px-4 py-2">Plan</th>
+                  <th className="px-4 py-2">PLAN</th>
+                  {/* <th className="px-4 py-2">Plan</th> */}
                   <th className="px-4 py-2">Purchase Date</th>
                   <th className="px-4 py-2">Devices Limit</th>
                   <th className="px-4 py-2">Actions</th>
@@ -137,7 +124,7 @@ const Tenants = () => {
                     <tr
                       key={tenant.id}
                       className="bg-white shadow-sm rounded-lg cursor-pointer hover:bg-gray-50 transition"
-                      onClick={() => handleTenantClick(tenant.teanut)}
+                      
                     >
                       <td className="px-4 py-3 font-medium">
                         {tenant.user_email}
@@ -145,22 +132,25 @@ const Tenants = () => {
                       <td className="px-4 py-3">{tenant.teanut}</td>
                       <td className="px-4 py-3">
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            tenant.plan_id === "three_devices"
+                          className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
+                            tenant.plan_id === "three_devices" ? "bg-yellow-100 text-yellow-700"
+                              : tenant.plan_id === "single_device"
                               ? "bg-green-100 text-green-700"
+                              : tenant.plan_id === "eight_devices"
+                              ? "bg-blue-100 text-blue-700"
                               : "bg-blue-100 text-blue-700"
                           }`}
                         >
                           {tenant.plan_type}
                         </span>
                       </td>
-                      <td className="px-4 py-3">{tenant.plan_id}</td>
+                      {/* <td className="px-4 py-3">{tenant.plan_id}</td> */}
                       <td className="px-4 py-3">
                         {new Date(tenant.purchase_date).toLocaleString()}
                       </td>
                       <td className="px-4 py-3">{tenant.device_limit}</td>
-                      <td className="px-4 py-3 text-blue-600 hover:underline flex items-center gap-2">
-                        <FaEye />
+                      <td className="px-4 py-3 text-blue-600 hover:underline flex items-center gap-2" onClick={() => handleTenantClick(tenant.teanut)}>
+                        <FaEye /> 
                         <span>View</span>
                       </td>
                     </tr>

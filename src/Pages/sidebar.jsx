@@ -14,7 +14,7 @@ const navItems = [
   { label: "Dashboard", to: "/", icon: <FaTachometerAlt /> },
   { label: "Tenets", to: "/tenants", icon: <FaBuilding /> },
   { label: "Devices", to: "/devices", icon: <FaTabletAlt /> },
-  { label: "Sync Monitors", to: "/sync", icon: <FaSync /> },
+  //{ label: "Sync Monitors", to: "/sync", icon: <FaSync /> },
   { label: "Sync logs", to: "/logs", icon: <FaSync /> },
   { label: "ERP Integration", to: "/erp", icon: <FaProjectDiagram /> },
   { label: "Manage Users", to: "/users", icon: <FaUsers /> },
@@ -73,8 +73,8 @@ const Sidebar = () => {
           Logout
         </button>
 
-        {/* Help Center Card */}
-        <div className="relative p-4 bg-[#0D0D2B] rounded-xl text-white shadow-md">
+       
+        {/* <div className="relative p-4 bg-[#0D0D2B] rounded-xl text-white shadow-md">
           <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow">
             <span className="text-black text-xl font-bold">?</span>
           </div>
@@ -86,7 +86,7 @@ const Sidebar = () => {
           <button className="mt-4 w-full py-2 bg-white text-black text-sm font-medium rounded-md hover:bg-gray-200 transition-all">
             Go To Help Center
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

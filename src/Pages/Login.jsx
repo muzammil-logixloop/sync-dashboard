@@ -86,14 +86,14 @@ const Login = () => {
           </button>
 
           {/* Forgot Password */}
-          <div className="text-center sm:text-right mt-4">
+          {/* <div className="text-center sm:text-right mt-4">
             <a
               href="/forgot-password"
               className="text-sm text-green-600 hover:underline"
             >
               Forgot Password?
             </a>
-          </div>
+          </div> */}
         </form>
       </div>
     </div>

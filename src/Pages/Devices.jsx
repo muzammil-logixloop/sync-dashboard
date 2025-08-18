@@ -32,52 +32,8 @@ const Devices = () => {
       const response = await axios.get('/api/pairing/pair');
       const apiData = response.data;
       
-      // For demo purposes, using the provided API response
-      // const mockApiData = [
-      //   {
-      //     "device_id": "92f5cb136bfc9b1a",
-      //     "device_name": "Samsung SM-A217F",
-      //     "tenant_id": "77e36f16-a211-4930-b305-7dcc94e76278"
-      //   },
-      //   {
-      //     "device_id": "6f7c1540ce7b7d16",
-      //     "device_name": "Redmi 13",
-      //     "tenant_id": "44c5951f-5f62-4024-935b-a59ec125d7db"
-      //   },
-      //   {
-      //     "device_id": "C8632C9631B449A292DFC0939AF57783",
-      //     "device_name": "Samsung SM-A217F",
-      //     "tenant_id": "ed05c3a4-4ee7-48c6-895c-962853fe63ed"
-      //   },
-      //   {
-      //     "device_id": "sfjd",
-      //     "device_name": "Tablet A",
-      //     "tenant_id": "d58aedb4-f68f-47c2-947a-3cf95a25ff53"
-      //   },
-      //   {
-      //     "device_id": "DEVICE_B_456",
-      //     "device_name": "Samsung Tab",
-      //     "tenant_id": "d58aedb4-f68f-47c2-947a-3cf95a25ff53"
-      //   },
-      //   {
-      //     "device_id": "338d91de33f54f3c",
-      //     "device_name": "Vivo V2430",
-      //     "tenant_id": "77e36f16-a211-4930-b305-7dcc94e76278"
-      //   },
-      //   {
-      //     "device_id": "3fa938463d2488e7",
-      //     "device_name": "Samsung SM-A217F",
-      //     "tenant_id": "44c5951f-5f62-4024-935b-a59ec125d7db"
-      //   },
-      //   {
-      //     "device_id": "b1ac4e6484dcbbd2",
-      //     "device_name": "TECNO MOBILE LIMITED TECNO KE5k",
-      //     "tenant_id": "ed05c3a4-4ee7-48c6-895c-962853fe63ed"
-      //   }
-      // ];
-
-      // // Use mockApiData for demo, replace with apiData when using real API
-      const dataToUse = apiData; // Change to: apiData
+      
+      const dataToUse = apiData; 
 
       // Transform API data to match component structure with placeholders
       const transformedDevices = dataToUse.map(device => ({
@@ -101,17 +57,7 @@ const Devices = () => {
     }
   };
 
-  // Helper functions
-  const getTenantName = (tenantId) => {
-    // Map tenant IDs to names - replace with actual tenant data from API
-    const tenantMap = {
-      "77e36f16-a211-4930-b305-7dcc94e76278": "Sweet Bakes",
-      "44c5951f-5f62-4024-935b-a59ec125d7db": "Café de Paris",
-      "ed05c3a4-4ee7-48c6-895c-962853fe63ed": "Salon Xpress",
-      "d58aedb4-f68f-47c2-947a-3cf95a25ff53": "Bread & Butter"
-    };
-    return tenantMap[tenantId] || "Unknown Tenant";
-  };
+ 
 
   // Filter devices based on current filters
   useEffect(() => {
@@ -120,7 +66,8 @@ const Devices = () => {
     if (filters.search) {
       filtered = filtered.filter(device => 
         device.deviceName.toLowerCase().includes(filters.search.toLowerCase()) ||
-        device.deviceId.toLowerCase().includes(filters.search.toLowerCase())
+        device.deviceId.toLowerCase().includes(filters.search.toLowerCase()) ||
+        device.tenant.toLowerCase().includes(filters.search.toLowerCase())
       );
     }
 
@@ -251,19 +198,19 @@ const Devices = () => {
             <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Search by Device ID or name"
+              placeholder="Search by Device ID or name or Tenant"
               value={filters.search}
               onChange={(e) => setFilters({...filters, search: e.target.value})}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
           </div>
           
-          <FilterDropdown 
+          {/* <FilterDropdown 
             label="Tenant" 
             value={filters.tenant}
             onChange={(e) => setFilters({...filters, tenant: e.target.value})}
             options={['Sweet Bakes', 'Café de Paris', 'Salon Xpress', 'Bread & Butter', 'Deli Delight']}
-          />
+          /> */}
           
           <FilterDropdown 
             label="Status" 
@@ -272,19 +219,19 @@ const Devices = () => {
             options={['Online', 'Offline']}
           />
           
-          <FilterDropdown 
+          {/* <FilterDropdown 
             label="Pick Date" 
             value={filters.pickDate}
             onChange={(e) => setFilters({...filters, pickDate: e.target.value})}
             options={['Today', 'Yesterday', 'Last 7 days', 'Last 30 days']}
-          />
+          /> */}
           
-          <button 
+          {/* <button 
             onClick={handleApplyFilter}
             className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
           >
             Apply Filter
-          </button>
+          </button> */}
           
           <button 
             onClick={handleResetFilter}
@@ -309,6 +256,7 @@ const Devices = () => {
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="text-left py-4 px-6 font-medium text-gray-700">Device Name</th>
+                <th className="text-left py-4 px-6 font-medium text-gray-700">Device ID</th>
                 <th className="text-left py-4 px-6 font-medium text-gray-700">Tenant</th>
                 <th className="text-left py-4 px-6 font-medium text-gray-700">Status</th>
                 <th className="text-left py-4 px-6 font-medium text-gray-700">Last Seen</th>
@@ -332,6 +280,7 @@ const Devices = () => {
                     >
                       {device.deviceName}
                     </td>
+                    <td className="py-4 px-6 text-gray-600">{device.deviceId}</td>
                     <td className="py-4 px-6 text-gray-600">{device.tenant}</td>
                     <td className="py-4 px-6">{getStatusBadge(device.status)}</td>
                     <td className="py-4 px-6 text-gray-600">{device.lastSeen}</td>
@@ -346,12 +295,7 @@ const Devices = () => {
                         <button className="p-1 text-green-500 hover:text-green-700 transition-colors" title="Sync">
                           <ArrowPathIcon className="w-4 h-4" />
                         </button>
-                        <button className="p-1 text-gray-500 hover:text-gray-700 transition-colors" title="Settings">
-                          <Cog6ToothIcon className="w-4 h-4" />
-                        </button>
-                        <button className="p-1 text-blue-500 hover:text-blue-700 transition-colors" title="User">
-                          <UserIcon className="w-4 h-4" />
-                        </button>
+                        
                       </div>
                     </td>
                   </tr>

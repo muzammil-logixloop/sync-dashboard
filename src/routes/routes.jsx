@@ -28,6 +28,7 @@ const AppRoutes = () => {
         <Route path="/" element={<Dashboard />} />
         <Route path="/tenants" element={<Tenants />} />
         <Route path="/devices" element={<Devices />} />
+        <Route path="/devices/:teanut" element={<Devices />} />
         <Route path="/sync" element={<SyncMonitor />} />
         <Route path="/logs" element={<SyncMonitorc />} />
         <Route path="/erp" element={<ERPConfig />} />
