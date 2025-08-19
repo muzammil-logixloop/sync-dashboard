@@ -15,9 +15,11 @@ const navItems = [
   { label: "Tenets", to: "/tenants", icon: <FaBuilding /> },
   { label: "Devices", to: "/devices", icon: <FaTabletAlt /> },
   //{ label: "Sync Monitors", to: "/sync", icon: <FaSync /> },
+  { label: "Browser Tables", to: "/tables", icon: <FaBuilding  /> },
   { label: "Sync logs", to: "/logs", icon: <FaSync /> },
-  { label: "ERP Integration", to: "/erp", icon: <FaProjectDiagram /> },
+  // { label: "ERP Integration", to: "/erp", icon: <FaProjectDiagram /> },
   { label: "Manage Users", to: "/users", icon: <FaUsers /> },
+  
 ];
 
 const Sidebar = () => {

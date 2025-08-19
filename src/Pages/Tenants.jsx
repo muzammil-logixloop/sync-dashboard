@@ -38,7 +38,7 @@ const Tenants = () => {
   }, []);
 
   const handleTenantClick = (teanut) => {
-     navigate(`/tenant/${teanut}`);
+     navigate(`/devices/${teanut}`);
    };
 
   // Filtered tenants

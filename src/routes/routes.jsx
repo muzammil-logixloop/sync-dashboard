@@ -11,6 +11,7 @@ import TenantDetailPage from "../Pages/TenantDetailPage";
 import ERPConfig from "../Pages/Erpconfiguration"
 import SyncDetails from "../Pages/Syndetail";
 import DeviceLogViewer from "../Pages/DeviceLogViewer";
+import Tables from "../Pages/tables";
 
 
 // Protected route wrapper
@@ -33,9 +34,10 @@ const AppRoutes = () => {
         <Route path="/logs" element={<SyncMonitorc />} />
         <Route path="/erp" element={<ERPConfig />} />
         <Route path="/users" element={<Users />} />
-        <Route path="/tenant/:teanut" element={<TenantDetailPage />} />
+        {/* <Route path="/tenant/:teanut" element={<TenantDetailPage />} /> */}
         <Route path="/sync-details/:tenant" element={<SyncDetails />} />
-        <Route path="/devices/:deviceName" element={<DeviceLogViewer/>} />  
+        <Route path="/devi" element={<DeviceLogViewer/>} />  
+        <Route path="/tables" element={<Tables/>} /> 
       </Route>
 
       <Route path="*" element={<Navigate to="/" />} />

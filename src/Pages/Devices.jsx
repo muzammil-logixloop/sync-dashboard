@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from "react-router-dom";
 import axios from '../utils/axios';
 import { 
   MagnifyingGlassIcon, 
@@ -15,9 +16,13 @@ const Devices = () => {
   const [filteredDevices, setFilteredDevices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+
+  
+  const { teanut } = useParams();
   
   const [filters, setFilters] = useState({
-    search: '',
+    search: teanut || '',
     tenant: '',
     status: '',
     pickDate: ''

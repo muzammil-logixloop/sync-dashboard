@@ -125,13 +125,7 @@ const Users = () => {
       }
 
       // Simulate API call
-      const newUserData = {
-        id: Math.max(...allUsers.map(u => u.id)) + 1,
-        ...newUser,
-        role: 'Support',
-        status: 'Active',
-        lastLogin: new Date().toISOString()
-      };
+      
 
       
        const response = await axios.post('/api/auth/signup', newUserData);
@@ -175,18 +169,18 @@ const Users = () => {
     </div>
   );
 
-  const getRoleBadge = (role) => (
-    <div className="flex items-center space-x-2">
-      <div className={`w-2 h-2 rounded-full ${
-        role === 'Admin' ? 'bg-purple-500' : 'bg-blue-500'
-      }`}></div>
-      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-        role === 'Admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
-      }`}>
-        {role}
-      </span>
-    </div>
-  );
+  // const getRoleBadge = (role) => (
+  //   <div className="flex items-center space-x-2">
+  //     <div className={`w-2 h-2 rounded-full ${
+  //       role === 'Admin' ? 'bg-purple-500' : 'bg-blue-500'
+  //     }`}></div>
+  //     <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+  //       role === 'Admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+  //     }`}>
+  //       {role}
+  //     </span>
+  //   </div>
+  // );
 
   const getStatusBadge = (status) => (
     <span className={`px-3 py-1 rounded-full text-sm font-medium ${
@@ -395,7 +389,7 @@ const Users = () => {
                       <tr>
                         <th className="text-left py-4 px-6 font-medium text-gray-700">Name</th>
                         <th className="text-left py-4 px-6 font-medium text-gray-700">Email</th>
-                        <th className="text-left py-4 px-6 font-medium text-gray-700">Role</th>
+                        {/* <th className="text-left py-4 px-6 font-medium text-gray-700">Role</th> */}
                         <th className="text-left py-4 px-6 font-medium text-gray-700">Status</th>
                         <th className="text-left py-4 px-6 font-medium text-gray-700">Last Login</th>
                         <th className="text-left py-4 px-6 font-medium text-gray-700">Actions</th>
@@ -407,9 +401,9 @@ const Users = () => {
                           <tr key={user.id} className="hover:bg-gray-50 transition-colors">
                             <td className="py-4 px-6 font-medium text-gray-900">{user.name}</td>
                             <td className="py-4 px-6 text-gray-600">{user.email}</td>
-                            <td className="py-4 px-6">
+                            {/* <td className="py-4 px-6">
                               {getRoleBadge(user.role)}
-                            </td>
+                            </td> */}
                             <td className="py-4 px-6">
                               {getStatusBadge(user.status)}
                             </td>
@@ -424,13 +418,13 @@ const Users = () => {
                             </td>
                             <td className="py-4 px-6">
                               <div className="flex space-x-2">
-                                <button
+                                {/* <button
                                   onClick={() => setViewLogUser(user)}
                                   className="text-green-600 hover:text-green-800 font-medium flex items-center space-x-1 transition-colors"
                                 >
                                   <EyeIcon className="w-4 h-4" />
                                   <span>View Log</span>
-                                </button>
+                                </button> */}
 
                                 <button 
                                   onClick={() => handleDeleteUser(user.id)}

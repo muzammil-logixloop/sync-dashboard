@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create Axios instance
 const axiosInstance = axios.create({
-  baseURL: "https://sync-qjwe.onrender.com", // <-- your backend API base URL
+  baseURL:  "https://sync-qjwe.onrender.com", //"http://192.168.100.12:3000", // <-- your backend API base URL
   headers: {
     "Content-Type": "application/json",
   },
