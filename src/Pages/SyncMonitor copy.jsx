@@ -115,12 +115,12 @@ function SyncMonitor() {
                     <td className="p-3">{log.duration || "N/A"} ms</td>
                     <td className="p-3 text-red-600">{log.error_count || 0}</td>
                     <td className="p-3 flex gap-2">
-                      <button
+                      {/* <button
                         onClick={() => triggerManualSync(log.device_id)}
                         className="px-3 py-1 text-sm border border-lime-400 text-lime-700 rounded hover:bg-lime-100 transition"
                       >
                         🔁 Sync
-                      </button>
+                      </button> */}
                       <button
                         onClick={() => toggleDetails(log.id)}
                         className="px-3 py-1 text-sm border border-gray-300 text-gray-700 rounded hover:bg-gray-100 transition"
@@ -139,14 +139,14 @@ function SyncMonitor() {
                             <strong>🕒 Synced At:</strong>{" "}
                             {new Date(log.synced_at).toLocaleString()}
                           </div>
-                          <div>
+                          {/* <div>
                             <strong>⏱ Duration:</strong>{" "}
                             {log.duration ? `${log.duration} ms` : "N/A"}
-                          </div>
-                          <div>
+                          </div> */}
+                          {/* <div>
                             <strong>⚠️ Error Log:</strong>{" "}
                             {log.error_message || "None"}
-                          </div>
+                          </div> */}
                           <div>
                             <strong>📦 Records:</strong>{" "}
                             {log.record_ids?.join(", ") || "None"}
