@@ -36,8 +36,9 @@ const AppRoutes = () => {
         <Route path="/users" element={<Users />} />
         {/* <Route path="/tenant/:teanut" element={<TenantDetailPage />} /> */}
         <Route path="/sync-details/:tenant" element={<SyncDetails />} />
-        <Route path="/devi" element={<DeviceLogViewer/>} />  
+        <Route path="/devices/logs/:deviceId" element={<DeviceLogViewer/>} />  
         <Route path="/tables" element={<Tables/>} /> 
+        
       </Route>
 
       <Route path="*" element={<Navigate to="/" />} />

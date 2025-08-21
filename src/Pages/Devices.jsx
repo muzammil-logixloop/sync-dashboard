@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from "react-router-dom";
+import { useParams , useNavigate } from "react-router-dom";
 import axios from '../utils/axios';
 import { 
   MagnifyingGlassIcon, 
@@ -16,8 +16,7 @@ const Devices = () => {
   const [filteredDevices, setFilteredDevices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-
+  const [showPopup, setShowPopup] = useState(false);
   
   const { teanut } = useParams();
   
@@ -27,6 +26,40 @@ const Devices = () => {
     status: '',
     pickDate: ''
   });
+
+  const navigate = useNavigate();
+
+  const handleView = (deviceId) => {
+  navigate(`/devices/logs/${deviceId}`);
+};
+
+
+const handlesync = async (deviceId) => {
+  // show popup for this device
+  setShowPopup(true);
+
+    // hide after 2s
+    setTimeout(() => setShowPopup(false), 2000);
+
+  console.log("Sync queued for", deviceId);
+
+  try {
+    const res = await axios.post("/api/mannual_sync", {
+      deviceId: deviceId
+    });
+    console.log("✅ Sync response:", res.data);
+  } catch (err) {
+    console.error("❌ Sync failed:", err);
+  }
+};
+
+
+
+
+
+
+
+
 
   // Fetch devices from API using axios
   const fetchDevices = async () => {
@@ -293,16 +326,27 @@ const Devices = () => {
                       {getSyncStatusIndicator(device.syncStatus, device.syncStatusColor)}
                     </td>
                     <td className="py-4 px-6">
-                      <div className="flex space-x-2">
-                        <button className="p-1 text-blue-500 hover:text-blue-700 transition-colors" title="View">
-                          <EyeIcon className="w-4 h-4" />
-                        </button>
-                        <button className="p-1 text-green-500 hover:text-green-700 transition-colors" title="Sync">
-                          <ArrowPathIcon className="w-4 h-4" />
-                        </button>
-                        
-                      </div>
-                    </td>
+  <div className="flex space-x-2 relative">
+    <button
+      onClick={() => handleView(device.deviceId)}
+      className="p-1 text-blue-500 hover:text-blue-700 transition-colors"
+      title="View"
+    >
+      <EyeIcon className="w-4 h-4" />
+    </button>
+
+    <button
+      className="p-1 text-green-500 hover:text-green-700 transition-colors"
+      onClick={() => handlesync(device.deviceId)}
+      title="Sync"
+    >
+      <ArrowPathIcon className="w-4 h-4" />
+    </button>
+
+    
+  </div>
+</td>
+
                   </tr>
                 ))
               )}
@@ -323,6 +367,15 @@ const Devices = () => {
           </div>
         </div>
       </div>
+
+
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-green-400 text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in">
+            ✅ Sync Queued For this device
+          </div>
+        </div>
+      )}
     </div>
   );
 };
