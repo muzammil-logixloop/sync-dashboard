@@ -96,8 +96,8 @@ function SyncMonitor() {
                 <th className="p-3 text-left">Table</th>
                 <th className="p-3 text-left">Records</th>
                 <th className="p-3 text-left">Last Sync</th>
-                <th className="p-3 text-left">Duration</th>
-                <th className="p-3 text-left">Errors</th>
+                {/* <th className="p-3 text-left">Duration</th>
+                <th className="p-3 text-left">Errors</th> */}
                 <th className="p-3 text-left">Action</th>
               </tr>
             </thead>
@@ -112,8 +112,8 @@ function SyncMonitor() {
                     <td className="p-3">
                       {new Date(log.synced_at).toLocaleString()}
                     </td>
-                    <td className="p-3">{log.duration || "N/A"} ms</td>
-                    <td className="p-3 text-red-600">{log.error_count || 0}</td>
+                    {/* <td className="p-3">{log.duration || "N/A"} ms</td>
+                    <td className="p-3 text-red-600">{log.error_count || 0}</td> */}
                     <td className="p-3 flex gap-2">
                       {/* <button
                         onClick={() => triggerManualSync(log.device_id)}

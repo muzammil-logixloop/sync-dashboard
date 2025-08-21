@@ -5,11 +5,8 @@ import {
   MagnifyingGlassIcon, 
   ChevronDownIcon, 
   EyeIcon, 
-  ArrowPathIcon, 
-  Cog6ToothIcon,
-  UserIcon
+  ArrowPathIcon
 } from '@heroicons/react/24/outline';
-// import { useNavigate } from 'react-router-dom'; // Uncomment when integrating with router
 
 const Devices = () => {
   const [devices, setDevices] = useState([]);
@@ -17,9 +14,13 @@ const Devices = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
-  
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // show 10 devices per page
+
   const { teanut } = useParams();
-  
+  const navigate = useNavigate();
+
   const [filters, setFilters] = useState({
     search: teanut || '',
     tenant: '',
@@ -27,77 +28,61 @@ const Devices = () => {
     pickDate: ''
   });
 
-  const navigate = useNavigate();
-
   const handleView = (deviceId) => {
-  navigate(`/devices/logs/${deviceId}`);
-};
+    navigate(`/devices/logs/${deviceId}`);
+  };
 
-
-const handlesync = async (deviceId) => {
-  // show popup for this device
-  setShowPopup(true);
-
-    // hide after 2s
+  const handlesync = async (deviceId) => {
+    setShowPopup(true);
     setTimeout(() => setShowPopup(false), 2000);
 
-  console.log("Sync queued for", deviceId);
+    console.log("Sync queued for", deviceId);
 
-  try {
-    const res = await axios.post("/api/mannual_sync", {
-      deviceId: deviceId
-    });
-    console.log("✅ Sync response:", res.data);
-  } catch (err) {
-    console.error("❌ Sync failed:", err);
-  }
-};
+    try {
+      const res = await axios.post("/api/mannual_sync", { deviceId });
+      console.log("✅ Sync response:", res.data);
+    } catch (err) {
+      console.error("❌ Sync failed:", err);
+    }
+  };
 
-
-
-
-
-
-
-
-
-  // Fetch devices from API using axios
+  // Fetch devices from API
   const fetchDevices = async () => {
     try {
       setLoading(true);
-      
-      // Replace with your actual API endpoint
-      const response = await axios.get('/api/pairing/pair');
-      const apiData = response.data;
-      
-      
-      const dataToUse = apiData; 
 
-      // Transform API data to match component structure with placeholders
-      const transformedDevices = dataToUse.map(device => ({
-        deviceId: device.device_id,
-        deviceName: device.device_name,
-        tenantId: device.tenant_id,
-        tenant: device.tenant_id,
-        status: 'Online', // Placeholder - replace with actual data
-        lastSeen: '12 July, 10:05 am', // Placeholder - replace with actual data
-        syncStatus: 'Synced', // Placeholder - replace with actual data
-        syncStatusColor: 'text-green-600' // Placeholder - replace with actual data
-      }));
+      const response = await axios.get('/api/devices');
+      const apiData = response.data.devices || [];
+
+      const transformedDevices = apiData.map(device => {
+        const lastSeenDate = new Date(device.updated_at);
+        const now = new Date();
+        const diffMinutes = (now - lastSeenDate) / (1000 * 60);
+        const isOnline = diffMinutes <= 30;
+
+        return {
+          deviceId: device.deviceid,
+          deviceName: device.devicename || 'Unnamed Device',
+          tenantId: device.tenantid,
+          tenant: device.tenantid,
+          status: isOnline ? 'Online' : 'Offline',
+          lastSeen: lastSeenDate.toLocaleString(),
+          syncStatus: isOnline ? 'Synced' : 'Not Synced',
+          syncStatusColor: isOnline ? 'text-green-600' : 'text-red-600'
+        };
+      });
 
       setDevices(transformedDevices);
       setFilteredDevices(transformedDevices);
     } catch (err) {
       setError('Failed to fetch devices');
-      console.error('Error fetching devices:', err);
+      console.error('❌ Error fetching devices:', err);
     } finally {
       setLoading(false);
     }
   };
 
- 
-
-  // Filter devices based on current filters
+  // Apply filters
   useEffect(() => {
     let filtered = devices;
 
@@ -118,14 +103,12 @@ const handlesync = async (deviceId) => {
     }
 
     setFilteredDevices(filtered);
+    setCurrentPage(1); // reset to first page when filter changes
   }, [filters, devices]);
 
-  // Fetch devices on component mount
   useEffect(() => {
     fetchDevices();
   }, []);
-
-  // const navigate = useNavigate(); // Remove this line when integrating with router
 
   const FilterDropdown = ({ label, value, onChange, options = [] }) => (
     <div className="relative">
@@ -156,23 +139,16 @@ const handlesync = async (deviceId) => {
     );
   };
 
-  const getSyncStatusIndicator = (status, colorClass) => {
-    return (
-      <div className="flex items-center space-x-2">
-        <div className={`w-2 h-2 rounded-full ${
-          status === 'Synced' ? 'bg-green-500' : 
-          status === 'Failed' ? 'bg-red-500' : 
-          'bg-yellow-500'
-        }`}></div>
-        <span className={`font-medium ${colorClass}`}>{status}</span>
-      </div>
-    );
-  };
-
-  const handleApplyFilter = () => {
-    // Filter logic is already handled by useEffect
-    console.log('Filters applied:', filters);
-  };
+  const getSyncStatusIndicator = (status, colorClass) => (
+    <div className="flex items-center space-x-2">
+      <div className={`w-2 h-2 rounded-full ${
+        status === 'Synced' ? 'bg-green-500' : 
+        status === 'Failed' ? 'bg-red-500' : 
+        'bg-yellow-500'
+      }`}></div>
+      <span className={`font-medium ${colorClass}`}>{status}</span>
+    </div>
+  );
 
   const handleResetFilter = () => {
     setFilters({
@@ -187,7 +163,12 @@ const handlesync = async (deviceId) => {
     fetchDevices();
   };
 
-
+  // Pagination logic
+  const totalPages = Math.ceil(filteredDevices.length / itemsPerPage);
+  const paginatedDevices = filteredDevices.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   if (loading) {
     return (
@@ -243,33 +224,12 @@ const handlesync = async (deviceId) => {
             />
           </div>
           
-          {/* <FilterDropdown 
-            label="Tenant" 
-            value={filters.tenant}
-            onChange={(e) => setFilters({...filters, tenant: e.target.value})}
-            options={['Sweet Bakes', 'Café de Paris', 'Salon Xpress', 'Bread & Butter', 'Deli Delight']}
-          /> */}
-          
           <FilterDropdown 
             label="Status" 
             value={filters.status}
             onChange={(e) => setFilters({...filters, status: e.target.value})}
             options={['Online', 'Offline']}
           />
-          
-          {/* <FilterDropdown 
-            label="Pick Date" 
-            value={filters.pickDate}
-            onChange={(e) => setFilters({...filters, pickDate: e.target.value})}
-            options={['Today', 'Yesterday', 'Last 7 days', 'Last 30 days']}
-          /> */}
-          
-          {/* <button 
-            onClick={handleApplyFilter}
-            className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
-          >
-            Apply Filter
-          </button> */}
           
           <button 
             onClick={handleResetFilter}
@@ -283,7 +243,7 @@ const handlesync = async (deviceId) => {
       {/* Results count */}
       <div className="mb-4">
         <p className="text-sm text-gray-600">
-          Showing {filteredDevices.length} of {devices.length} devices
+          Showing {paginatedDevices.length} of {filteredDevices.length} filtered devices ({devices.length} total)
         </p>
       </div>
 
@@ -303,17 +263,17 @@ const handlesync = async (deviceId) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredDevices.length === 0 ? (
+              {paginatedDevices.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="py-8 px-6 text-center text-gray-500">
+                  <td colSpan="7" className="py-8 px-6 text-center text-gray-500">
                     No devices found matching your criteria
                   </td>
                 </tr>
               ) : (
-                filteredDevices.map((device, index) => (
+                paginatedDevices.map((device) => (
                   <tr key={device.deviceId} className="hover:bg-gray-50 transition-colors">
                     <td 
-                      onClick={() => console.log('Navigate to device:', device.deviceName)} // Replace with actual navigation
+                      onClick={() => console.log('Navigate to device:', device.deviceName)}
                       className="py-4 px-6 font-medium text-gray-900 hover:underline cursor-pointer"
                     >
                       {device.deviceName}
@@ -326,27 +286,24 @@ const handlesync = async (deviceId) => {
                       {getSyncStatusIndicator(device.syncStatus, device.syncStatusColor)}
                     </td>
                     <td className="py-4 px-6">
-  <div className="flex space-x-2 relative">
-    <button
-      onClick={() => handleView(device.deviceId)}
-      className="p-1 text-blue-500 hover:text-blue-700 transition-colors"
-      title="View"
-    >
-      <EyeIcon className="w-4 h-4" />
-    </button>
+                      <div className="flex space-x-2 relative">
+                        <button
+                          onClick={() => handleView(device.deviceId)}
+                          className="p-1 text-blue-500 hover:text-blue-700 transition-colors"
+                          title="View"
+                        >
+                          <EyeIcon className="w-4 h-4" />
+                        </button>
 
-    <button
-      className="p-1 text-green-500 hover:text-green-700 transition-colors"
-      onClick={() => handlesync(device.deviceId)}
-      title="Sync"
-    >
-      <ArrowPathIcon className="w-4 h-4" />
-    </button>
-
-    
-  </div>
-</td>
-
+                        <button
+                          className="p-1 text-green-500 hover:text-green-700 transition-colors"
+                          onClick={() => handlesync(device.deviceId)}
+                          title="Sync"
+                        >
+                          <ArrowPathIcon className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))
               )}
@@ -354,20 +311,39 @@ const handlesync = async (deviceId) => {
           </table>
         </div>
         
-        {/* Pagination - You can make this dynamic too based on your API pagination */}
+        {/* Real Pagination */}
         <div className="bg-white px-6 py-4 border-t border-gray-200">
           <div className="flex items-center justify-center space-x-2">
-            <button className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 transition-colors">01</button>
-            <button className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 transition-colors">02</button>
-            <button className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 transition-colors">03</button>
-            <span className="px-3 py-1 text-sm text-gray-400">...</span>
-            <button className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 transition-colors">04</button>
-            <button className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 transition-colors">05</button>
-            <button className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 transition-colors">06</button>
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50"
+            >
+              Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1 text-sm rounded ${
+                  currentPage === page
+                    ? "bg-green-500 text-white"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50"
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>
-
 
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
