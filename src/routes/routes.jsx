@@ -38,6 +38,7 @@ const AppRoutes = () => {
         <Route path="/sync-details/:tenant" element={<SyncDetails />} />
         <Route path="/devices/logs/:deviceId" element={<DeviceLogViewer/>} />  
         <Route path="/tables" element={<Tables/>} /> 
+        <Route path="/tables/:tableName/:recordId" element={<Tables/>} />
         
       </Route>
 
